@@ -1,0 +1,28 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Survey App!</h1>
+    <p class="lead">Thank you for participating in our survey. Your feedback is valuable and helps us understand various preferences and opinions.</p>
+    <p>This survey will take approximately 5-10 minutes to complete, depending on the length option you choose.</p>
+
+    <div class="mt-5">
+        <a asp-page="/Page1" class="btn btn-primary btn-lg">Start Survey</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide the progress bar on the index page
+            const progressBarContainer = document.getElementById('survey-progress-container');
+            if (progressBarContainer) {
+                progressBarContainer.style.display = 'none';
+            }
+            console.log("Index Page JS loaded.");
+        });
+    </script>
+}

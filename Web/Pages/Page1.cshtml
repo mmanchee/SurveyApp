@@ -1,0 +1,85 @@
+﻿@page
+@model SurveyApp.Web.Pages.Survey.Page1Model
+@{
+    ViewData["Title"] = "Survey - Page 1";
+}
+
+<h1>Survey - General Information (Page @Model.CurrentPage of @Model.TotalPages)</h1>
+<hr />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.Name" class="form-label"></label>
+        <input asp-for="SurveyResponse.Name" class="form-control" />
+        <span asp-validation-for="SurveyResponse.Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.Age" class="form-label"></label>
+        <input asp-for="SurveyResponse.Age" type="number" class="form-control" />
+        <span asp-validation-for="SurveyResponse.Age" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.Industry" class="form-label"></label>
+        @* Add an ID to the select list for the JS toggle function *@
+        <select asp-for="SurveyResponse.Industry" class="form-select" asp-items="Model.IndustryOptions" id="SurveyResponse_Industry">
+            <option value="">-- Select Industry --</option>
+        </select>
+        <span asp-validation-for="SurveyResponse.Industry" class="text-danger"></span>
+
+        @* NEW: 'Other' Textbox for Industry - Initially hidden *@
+        <div id="industryOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.IndustryOther" class="form-label">Please specify industry:</label>
+            <input asp-for="SurveyResponse.IndustryOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.IndustryOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.Position" class="form-label"></label>
+        @* Add an ID to the select list for the JS toggle function *@
+        <select asp-for="SurveyResponse.Position" class="form-select" asp-items="Model.PositionOptions" id="SurveyResponse_Position">
+            <option value="">-- Select Position --</option>
+        </select>
+        <span asp-validation-for="SurveyResponse.Position" class="text-danger"></span>
+
+        @* NEW: 'Other' Textbox for Position - Initially hidden *@
+        <div id="positionOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.PositionOther" class="form-label">Please specify position:</label>
+            <input asp-for="SurveyResponse.PositionOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.PositionOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    @* Keep the hidden field for SurveyDate if you want to manage its value via backend/session *@
+    @* <input type="hidden" asp-for="SurveyResponse.SurveyDate" /> *@
+
+
+    <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar for this page
+            updateProgressBar(@Model.CurrentPage, @Model.TotalPages);
+             console.log("Page 1 JS loaded.");
+
+             // ** NEW: Setup toggle for Industry 'Other' field **
+             // The controlId is the ID of the select element
+             // The otherValue is 'Other'
+             // The otherTextboxId is the ID of the div containing the 'Other' input
+             setupOtherFieldToggle('SurveyResponse_Industry', 'Other', 'industryOtherTextbox');
+
+             // ** NEW: Setup toggle for Position 'Other' field **
+             setupOtherFieldToggle('SurveyResponse_Position', 'Other', 'positionOtherTextbox');
+        });
+    </script>
+}

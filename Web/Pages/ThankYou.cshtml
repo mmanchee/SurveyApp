@@ -1,0 +1,189 @@
+﻿@page
+@model SurveyApp.Web.Pages.Survey.ThankYouModel
+@{
+    ViewData["Title"] = "Survey Complete";
+}
+
+<h1>Survey Complete (Page @Model.CurrentPage of @Model.TotalPages)</h1>
+<hr />
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+}
+
+@if (ViewData["ResultMessage"] != null)
+{
+    <div class="alert @(Model.SubmissionSuccessful ? "alert-success" : "alert-warning")">
+        @ViewData["ResultMessage"]
+    </div>
+}
+
+@if (!Model.SubmissionSuccessful) // Only show submit/back and summary if not successfully submitted yet
+{
+    <p>Please review your answers below and click Submit when ready.</p> @* Adjusted text slightly *@
+
+    <form method="post">
+        @* Use asp-page-handler to differentiate between Back and Submit posts *@
+        <div class="mt-4 mb-4 d-flex justify-content-between"> @* Added mb-4 for spacing below buttons *@
+             <button type="submit" asp-page-handler="Back" class="btn btn-secondary">Back</button>
+             <button type="submit" asp-page-handler="Submit" class="btn btn-primary">Submit Survey</button>
+        </div>
+    </form>
+
+    @* START: Display Survey Summary block - Moved here *@
+    @if (Model.SurveySummary != null)
+    {
+        <h2>Your Answers:</h2>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">General Information</h5>
+                <p><strong>Name:</strong> @Model.SurveySummary.Name</p>
+                <p><strong>Age:</strong> @Model.SurveySummary.Age</p>
+                <p><strong>Industry:</strong> @Model.SurveySummary.Industry
+                     @if (Model.SurveySummary.Industry == "Other" && !string.IsNullOrWhiteSpace(Model.SurveySummary.IndustryOther))
+                     {
+                         <span> (@Model.SurveySummary.IndustryOther)</span>
+                     }
+                </p>
+                <p><strong>Position:</strong> @Model.SurveySummary.Position
+                     @if (Model.SurveySummary.Position == "Other" && !string.IsNullOrWhiteSpace(Model.SurveySummary.PositionOther))
+                     {
+                         <span> (@Model.SurveySummary.PositionOther)</span>
+                     }
+                </p>
+                 <p><strong>Survey Started:</strong> @Model.SurveySummary.SurveyDate.ToShortDateString() @Model.SurveySummary.SurveyDate.ToShortTimeString()</p>
+                 <p><strong>Survey Length Chosen:</strong> @Model.SurveySummary.SurveyLengthChoice</p>
+
+                 @* Display Page 3 answers if applicable *@
+                 @if (Model.SurveySummary.SurveyLengthChoice == "OneMore" || Model.SurveySummary.SurveyLengthChoice == "TwoMore" || Model.SurveySummary.SurveyLengthChoice == "Full")
+                 {
+                     <hr />
+                     <h5 class="card-title">Preferences</h5>
+                     <p><strong>Things I like:</strong> @Model.SurveySummary.Likes</p>
+                     <p><strong>Favorite Color:</strong> @Model.SurveySummary.FavoriteColor
+                          @if (Model.SurveySummary.FavoriteColor == "Other" && !string.IsNullOrWhiteSpace(Model.SurveySummary.FavoriteColorOther))
+                          {
+                              <span> (@Model.SurveySummary.FavoriteColorOther)</span>
+                          }
+                     </p>
+                      <p><strong>Favorite Music Genres:</strong>
+                          @if (Model.SurveySummary.FavoriteMusicGenres != null && Model.SurveySummary.FavoriteMusicGenres.Any())
+                          {
+                             <span>@string.Join(", ", Model.SurveySummary.FavoriteMusicGenres)</span>
+                             @if (Model.SurveySummary.FavoriteMusicGenres.Contains("Other") && !string.IsNullOrWhiteSpace(Model.SurveySummary.FavoriteMusicGenresOther))
+                             {
+                                 <span> (@Model.SurveySummary.FavoriteMusicGenresOther)</span>
+                             }
+                          }
+                          else
+                          {
+                              <span>Not specified</span>
+                          }
+                      </p>
+
+                      <p><strong>Favorite Season:</strong> @Model.SurveySummary.FavoriteSeason
+                          @if (Model.SurveySummary.FavoriteSeason == "Other" && !string.IsNullOrWhiteSpace(Model.SurveySummary.FavoriteSeasonOther))
+                          {
+                              <span> (@Model.SurveySummary.FavoriteSeasonOther)</span>
+                          }
+                      </p>
+                      <p><strong>Favorite Place & Why:</strong> @Model.SurveySummary.FavoritePlaceWhy</p>
+                 }
+
+                 @* Display Page 4 answers if applicable *@
+                  @if (Model.SurveySummary.SurveyLengthChoice == "TwoMore" || Model.SurveySummary.SurveyLengthChoice == "Full")
+                  {
+                     <hr />
+                     <h5 class="card-title">Opinions (Likert Scale 1=Strongly Disagree, 5=Strongly Agree)</h5>
+                      @if (Model.SurveySummary.LikertJob.HasValue)
+                      {
+                           <p><strong>I like my job:</strong> @Model.SurveySummary.LikertJob (@SurveyOptions.LikertScale.GetValueOrDefault(Model.SurveySummary.LikertJob.Value))</p>
+                      }
+                       @if (Model.SurveySummary.LikertHome.HasValue)
+                      {
+                           <p><strong>I like my home:</strong> @Model.SurveySummary.LikertHome (@SurveyOptions.LikertScale.GetValueOrDefault(Model.SurveySummary.LikertHome.Value))</p>
+                      }
+                       @if (Model.SurveySummary.LikertFamily.HasValue)
+                      {
+                           <p><strong>I like my family:</strong> @Model.SurveySummary.LikertFamily (@SurveyOptions.LikertScale.GetValueOrDefault(Model.SurveySummary.LikertFamily.Value))</p>
+                      }
+                       @if (Model.SurveySummary.LikertAnimals.HasValue)
+                      {
+                           <p><strong>I like animals:</strong> @Model.SurveySummary.LikertAnimals (@SurveyOptions.LikertScale.GetValueOrDefault(Model.SurveySummary.LikertAnimals.Value))</p>
+                      }
+                       @if (Model.SurveySummary.LikertFriends.HasValue)
+                      {
+                           <p><strong>I like my friends:</strong> @Model.SurveySummary.LikertFriends (@SurveyOptions.LikertScale.GetValueOrDefault(Model.SurveySummary.LikertFriends.Value))</p>
+                      }
+                  }
+
+                 @* Display Page 5 answers if applicable *@
+                   @if (Model.SurveySummary.SurveyLengthChoice == "Full")
+                   {
+                     <hr />
+                     <h5 class="card-title">Dislikes</h5>
+                     <p><strong>Worst Color:</strong> @Model.SurveySummary.WorstColor
+                          @if (Model.SurveySummary.WorstColor == "Other" && !string.IsNullOrWhiteSpace(Model.SurveySummary.WorstColorOther))
+                          {
+                              <span> (@Model.SurveySummary.WorstColorOther)</span>
+                          }
+                     </p>
+                     <p><strong>Least Favorite Music Genres:</strong>
+                          @if (Model.SurveySummary.WorstMusicGenres != null && Model.SurveySummary.WorstMusicGenres.Any())
+                          {
+                             <span>@string.Join(", ", Model.SurveySummary.WorstMusicGenres)</span>
+                             @if (Model.SurveySummary.WorstMusicGenres.Contains("Other") && !string.IsNullOrWhiteSpace(Model.SurveySummary.WorstMusicGenresOther))
+                             {
+                                 <span> (@Model.SurveySummary.WorstMusicGenresOther)</span>
+                             }
+                          }
+                          else
+                          {
+                              <span>Not specified</span>
+                          }
+                      </p>
+
+                      <p><strong>Worst Season:</strong> @Model.SurveySummary.WorstSeason
+                          @if (Model.SurveySummary.WorstSeason == "Other" && !string.IsNullOrWhiteSpace(Model.SurveySummary.WorstSeasonOther))
+                          {
+                              <span> (@Model.SurveySummary.WorstSeasonOther)</span>
+                          }
+                      </p>
+                      <p><strong>Worst Place & Why:</strong> @Model.SurveySummary.WorstPlaceWhy</p>
+                   }
+
+             </div>
+         </div>
+    }
+    @* END: Display Survey Summary block *@
+
+}
+else // This block shows when SubmissionSuccessful is true
+{
+     <p>You can now close this window.</p>
+     @* Optionally display a summary of the submitted data here if you want it visible AFTER submission as well *@
+     @* For example, load it back from DB after submission if needed, or keep session data longer *@
+}
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar for this page
+            updateProgressBar(@Model.CurrentPage, @Model.TotalPages);
+            console.log("Thank You Page JS loaded.");
+
+            // Hide the progress bar after successful submission message is shown
+            @if (Model.SubmissionSuccessful)
+            {
+                <text>
+                const progressBarContainer = document.getElementById('survey-progress-container');
+                if (progressBarContainer) {
+                    progressBarContainer.style.display = 'none';
+                }
+                </text>
+            }
+        });
+    </script>
+}

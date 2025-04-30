@@ -1,0 +1,112 @@
+﻿@page
+@model SurveyApp.Web.Pages.Survey.Page5Model
+@{
+    ViewData["Title"] = "Survey - Page 5";
+}
+
+<h1>Survey - Dislikes (Page @Model.CurrentPage of @Model.TotalPages)</h1>
+<hr />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label class="form-label">What is your worst color?</label>
+        <div id="worstColorGroup">
+            @* Container for JS targeting *@
+            @foreach (var color in SurveyOptions.Colors)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.WorstColor" value="@color" id="worstColor_@(color.Replace(" ", ""))" />
+                    <label class="form-check-label" for="worstColor_@(color.Replace(" ", ""))">
+                        @color
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.WorstColor" class="text-danger"></span>
+
+        @* 'Other' Textbox - Initially hidden *@
+        <div id="worstColorOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.WorstColorOther" class="form-label">Please specify:</label>
+            <input asp-for="SurveyResponse.WorstColorOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.WorstColorOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">What are your least favorite music genres? (Select all that apply)</label>
+        <div id="worstMusicGenreGroup">
+            @* Hidden input to ensure the list is sent on post even if no checkboxes are checked *@
+            <input type="hidden" name="SurveyResponse.WorstMusicGenres" value="" />
+            @foreach (var genre in Model.WorstMusicGenresOptions) @* Corrected: Iterate over WorstMusicGenresOptions *@
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           name="SurveyResponse.WorstMusicGenres"
+                           value="@genre.Value"
+                           id="worstMusic_@(genre.Value.Replace(" ", ""))"
+                    @(Model.SurveyResponse.WorstMusicGenres.Contains(genre.Value) ? "checked" : "") /> @* Check against SurveyResponse.WorstMusicGenres *@
+                    <label class="form-check-label" for="worstMusic_@(genre.Value.Replace(" ", ""))">
+                        @genre.Text @* Corrected: Use loop variable 'genre' *@
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.WorstMusicGenres" class="text-danger"></span> @* Validation for the list itself if needed *@
+
+        @* 'Other' Textbox - Initially hidden *@
+        <div id="worstMusicOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.WorstMusicGenresOther" class="form-label">Please specify other genres:</label>
+            <input asp-for="SurveyResponse.WorstMusicGenresOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.WorstMusicGenresOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.WorstSeason" class="form-label">What is your worst season?</label>
+        <select asp-for="SurveyResponse.WorstSeason" class="form-select" asp-items="Model.SeasonOptions" id="SurveyResponse_WorstSeason">
+            <option value="">-- Select Season --</option>
+        </select>
+        <span asp-validation-for="SurveyResponse.WorstSeason" class="text-danger"></span>
+
+        @* 'Other' Textbox - Initially hidden *@
+        <div id="worstSeasonOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.WorstSeasonOther" class="form-label">Please specify:</label>
+            <input asp-for="SurveyResponse.WorstSeasonOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.WorstSeasonOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.WorstPlaceWhy" class="form-label">Where is your worst place and why? (Optional)</label>
+        <textarea asp-for="SurveyResponse.WorstPlaceWhy" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="SurveyResponse.WorstPlaceWhy" class="text-danger"></span>
+    </div>
+
+
+    <div class="mt-4 d-flex justify-content-between">
+        <button type="submit" asp-page-handler="Back" class="btn btn-secondary">Back</button>
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar for this page
+            updateProgressBar(@Model.CurrentPage, @Model.TotalPages);
+             console.log("Page 5 JS loaded.");
+
+            // Setup toggle for Worst Color 'Other' field
+            setupOtherFieldToggle('worstColorGroup', 'Other', 'worstColorOtherTextbox');
+
+            // Setup toggle for Worst Music Genres 'Other' field
+            // This is slightly different as it's checkboxes. We target the specific 'Other' checkbox
+            setupOtherFieldToggle('worstMusic_Other', 'Other', 'worstMusicOtherTextbox');
+            // Setup toggle for Worst Season 'Other' field
+            setupOtherFieldToggle('SurveyResponse_WorstSeason', 'Other', 'worstSeasonOtherTextbox');
+        });
+    </script>
+}

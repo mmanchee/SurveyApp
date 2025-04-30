@@ -1,0 +1,111 @@
+﻿@page
+@model SurveyApp.Web.Pages.Survey.Page4Model
+@{
+    ViewData["Title"] = "Survey - Page 4";
+}
+
+<h1>Survey - Opinions (Page @Model.CurrentPage of @Model.TotalPages)</h1>
+<hr />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @* Example Snippet (Page 4 - Likert Scale) [cite: 185] *@
+    <div class="mb-4">
+        <label asp-for="SurveyResponse.LikertJob" class="form-label fw-bold">I like my job:</label>
+        <div class="likert-scale d-flex justify-content-between">
+            @foreach (var scalePoint in Model.LikertScaleOptions)
+            {
+                <div class="form-check form-check-inline text-center">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.LikertJob" value="@scalePoint.Key" id="likertJob_@scalePoint.Key">
+                    <label class="form-check-label" for="likertJob_@scalePoint.Key" style="font-size: 0.9em;">
+                        @scalePoint.Value <br /> (@scalePoint.Key)
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.LikertJob" class="text-danger d-block text-center mt-1"></span>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="SurveyResponse.LikertHome" class="form-label fw-bold">I like my home:</label>
+        <div class="likert-scale d-flex justify-content-between">
+            @foreach (var scalePoint in Model.LikertScaleOptions)
+            {
+                <div class="form-check form-check-inline text-center">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.LikertHome" value="@scalePoint.Key" id="likertHome_@scalePoint.Key">
+                    <label class="form-check-label" for="likertHome_@scalePoint.Key" style="font-size: 0.9em;">
+                        @scalePoint.Value <br /> (@scalePoint.Key)
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.LikertHome" class="text-danger d-block text-center mt-1"></span>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="SurveyResponse.LikertFamily" class="form-label fw-bold">I like my family:</label>
+        <div class="likert-scale d-flex justify-content-between">
+            @foreach (var scalePoint in Model.LikertScaleOptions)
+            {
+                <div class="form-check form-check-inline text-center">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.LikertFamily" value="@scalePoint.Key" id="likertFamily_@scalePoint.Key">
+                    <label class="form-check-label" for="likertFamily_@scalePoint.Key" style="font-size: 0.9em;">
+                        @scalePoint.Value <br /> (@scalePoint.Key)
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.LikertFamily" class="text-danger d-block text-center mt-1"></span>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="SurveyResponse.LikertAnimals" class="form-label fw-bold">I like animals:</label>
+        <div class="likert-scale d-flex justify-content-between">
+            @foreach (var scalePoint in Model.LikertScaleOptions)
+            {
+                <div class="form-check form-check-inline text-center">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.LikertAnimals" value="@scalePoint.Key" id="likertAnimals_@scalePoint.Key">
+                    <label class="form-check-label" for="likertAnimals_@scalePoint.Key" style="font-size: 0.9em;">
+                        @scalePoint.Value <br /> (@scalePoint.Key)
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.LikertAnimals" class="text-danger d-block text-center mt-1"></span>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="SurveyResponse.LikertFriends" class="form-label fw-bold">I like my friends:</label>
+        <div class="likert-scale d-flex justify-content-between">
+            @foreach (var scalePoint in Model.LikertScaleOptions)
+            {
+                <div class="form-check form-check-inline text-center">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.LikertFriends" value="@scalePoint.Key" id="likertFriends_@scalePoint.Key">
+                    <label class="form-check-label" for="likertFriends_@scalePoint.Key" style="font-size: 0.9em;">
+                        @scalePoint.Value <br /> (@scalePoint.Key)
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.LikertFriends" class="text-danger d-block text-center mt-1"></span>
+    </div>
+
+
+    <div class="mt-4 d-flex justify-content-between">
+        <button type="submit" asp-page-handler="Back" class="btn btn-secondary">Back</button>
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar for this page
+            updateProgressBar(@Model.CurrentPage, @Model.TotalPages);
+             console.log("Page 4 JS loaded.");
+             // No 'Other' fields to toggle on this page
+        });
+    </script>
+}

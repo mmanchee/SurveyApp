@@ -1,0 +1,119 @@
+﻿@page
+@model SurveyApp.Web.Pages.Survey.Page3Model
+@{
+    ViewData["Title"] = "Survey - Page 3";
+}
+
+<h1>Survey - Preferences (Page @Model.CurrentPage of @Model.TotalPages)</h1>
+<hr />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.Likes" class="form-label">What are some things you like? (Optional)</label>
+        <textarea asp-for="SurveyResponse.Likes" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="SurveyResponse.Likes" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">What is your favorite color?</label>
+        <div id="favColorGroup">
+            @* Container for JS targeting *@
+            @foreach (var color in SurveyOptions.Colors)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="SurveyResponse.FavoriteColor" value="@color" id="favColor_@(color.Replace(" ", ""))" />
+                    <label class="form-check-label" for="favColor_@(color.Replace(" ", ""))">
+                        @color
+                    </label>
+                </div>
+            }
+        </div>
+        <span asp-validation-for="SurveyResponse.FavoriteColor" class="text-danger"></span>
+
+        @* 'Other' Textbox - Initially hidden *@
+        <div id="favColorOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.FavoriteColorOther" class="form-label">Please specify:</label>
+            <input asp-for="SurveyResponse.FavoriteColorOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.FavoriteColorOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">What are your favorite music genres? (Select all that apply)</label>
+        <div id="favMusicGenreGroup">
+            @* Hidden input to ensure the list is sent on post even if no checkboxes are checked *@
+            <input type="hidden" name="SurveyResponse.FavoriteMusicGenres" value="" />
+            @foreach (var genre in Model.MusicGenreOptions)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           name="SurveyResponse.FavoriteMusicGenres"
+                           value="@genre.Value"
+                           id="favMusic_@(genre.Value.Replace(" ", ""))"
+                    @(Model.SurveyResponse.FavoriteMusicGenres.Contains(genre.Value) ? "checked" : "") />
+                    <label class="form-check-label" for="favMusic_@(genre.Value.Replace(" ", ""))">
+                        @genre.Text
+                    </label>
+                </div>
+            }
+        </div>
+        @* Validation for the list itself if needed - asp-validation-for on a List<string> checks if it's null or empty based on [Required] attribute *@
+        <span asp-validation-for="SurveyResponse.FavoriteMusicGenres" class="text-danger"></span>
+
+        @* 'Other' Textbox - Initially hidden *@
+        <div id="favMusicOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.FavoriteMusicGenresOther" class="form-label">Please specify other genres:</label>
+            <input asp-for="SurveyResponse.FavoriteMusicGenresOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.FavoriteMusicGenresOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.FavoriteSeason" class="form-label">What is your favorite season?</label>
+        <select asp-for="SurveyResponse.FavoriteSeason" class="form-select" asp-items="Model.SeasonOptions" id="SurveyResponse_FavoriteSeason">
+            <option value="">-- Select Season --</option>
+        </select>
+        <span asp-validation-for="SurveyResponse.FavoriteSeason" class="text-danger"></span>
+
+        @* 'Other' Textbox - Initially hidden *@
+        <div id="favSeasonOtherTextbox" class="mt-2" style="display: none;">
+            <label asp-for="SurveyResponse.FavoriteSeasonOther" class="form-label">Please specify:</label>
+            <input asp-for="SurveyResponse.FavoriteSeasonOther" class="form-control" />
+            <span asp-validation-for="SurveyResponse.FavoriteSeasonOther" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.FavoritePlaceWhy" class="form-label">Where is your favorite place and why? (Optional)</label>
+        <textarea asp-for="SurveyResponse.FavoritePlaceWhy" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="SurveyResponse.FavoritePlaceWhy" class="text-danger"></span>
+    </div>
+
+
+    <div class="mt-4 d-flex justify-content-between">
+        <button type="submit" asp-page-handler="Back" class="btn btn-secondary">Back</button>
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar for this page
+            updateProgressBar(@Model.CurrentPage, @Model.TotalPages);
+             console.log("Page 3 JS loaded.");
+
+            // Setup toggle for Favorite Color 'Other' field
+            setupOtherFieldToggle('favColorGroup', 'Other', 'favColorOtherTextbox');
+
+            // Setup toggle for Favorite Music Genres 'Other' field
+            // This is slightly different as it's checkboxes. We target the specific 'Other' checkbox
+            setupOtherFieldToggle('favMusic_Other', 'Other', 'favMusicOtherTextbox');
+            // Setup toggle for Favorite Season 'Other' field
+            setupOtherFieldToggle('SurveyResponse_FavoriteSeason', 'Other', 'favSeasonOtherTextbox');
+        });
+    </script>
+}

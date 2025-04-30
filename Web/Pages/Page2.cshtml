@@ -1,0 +1,61 @@
+﻿@page
+@model SurveyApp.Web.Pages.Survey.Page2Model
+@{
+    ViewData["Title"] = "Survey - Page 2";
+}
+
+<h1>Survey - Length Choice (Page @Model.CurrentPage of @Model.TotalPages)</h1>
+<hr />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="SurveyResponse.SurveyLengthChoice" class="form-label">How much longer would you like the survey to be?</label>
+        <div id="surveyLengthGroup">
+            @* Container for JS targeting if needed *@
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="SurveyResponse.SurveyLengthChoice" value="EndHere" id="length_end" />
+                <label class="form-check-label" for="length_end">
+                    End here (2 pages total)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="SurveyResponse.SurveyLengthChoice" value="OneMore" id="length_one" />
+                <label class="form-check-label" for="length_one">
+                    One more page (3 pages total)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="SurveyResponse.SurveyLengthChoice" value="TwoMore" id="length_two" />
+                <label class="form-check-label" for="length_two">
+                    Two more pages (4 pages total)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="SurveyResponse.SurveyLengthChoice" value="Full" id="length_full" />
+                <label class="form-check-label" for="length_full">
+                    Take the full survey (5 pages total)
+                </label>
+            </div>
+        </div>
+        <span asp-validation-for="SurveyResponse.SurveyLengthChoice" class="text-danger"></span>
+    </div>
+
+
+    <div class="mt-4 d-flex justify-content-between">
+        <button type="submit" asp-page-handler="Back" class="btn btn-secondary">Back</button>
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar for this page
+            updateProgressBar(@Model.CurrentPage, @Model.TotalPages);
+             console.log("Page 2 JS loaded.");
+        });
+    </script>
+}
